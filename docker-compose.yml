@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  frontend:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      - MICROSERVICE_URL=http://microservice:8000
+    depends_on:
+      - microservice
+    restart: unless-stopped
+
+  microservice:
+    build: ./microservice
+    ports:
+      - "8000:8000"
+    environment:
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - SUPABASE_URL=${SUPABASE_URL}
+      - SUPABASE_ANON_KEY=${SUPABASE_ANON_KEY}
+      - FIRECRAWL_API_KEY=${FIRECRAWL_API_KEY}
+    restart: unless-stopped
+    volumes:
+      - ./microservice:/app
